@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تبدیل مستقیم یوتیوب به فایل صوتی</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1f1c2c, #928dab); /* یک گرادیانت چشم‌نواز جدید */
+            color: #ffffff;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            background: -webkit-linear-gradient(#fbc2eb, #a6c1ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        p {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.3s ease, background 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #a6c1ee;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        input::placeholder {
+            color: #a0aec0;
+        }
+        select {
+            width: 100%;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            margin-bottom: 20px;
+            cursor: pointer;
+            appearance: none;
+        }
+        select option {
+            background: #2d3748;
+            color: #fff;
+        }
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(118, 75, 162, 0.4);
+        }
+        button:disabled {
+            background: #4a5568;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .loader {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: #fbc2eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #result {
+            margin-top: 25px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #download-btn {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            text-decoration: none;
+            display: block;
+            box-shadow: 0 10px 20px rgba(56, 239, 125, 0.3);
+            margin-top: 15px;
+        }
+        #download-btn:hover {
+            background: linear-gradient(90deg, #0f8a7e 0%, #32d970 100%);
+        }
+        .error {
+            color: #ff7675;
+            background: rgba(255, 118, 117, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>دانلود مستقیم از یوتیوب</h1>
+        <p>بدون نیاز به نرم‌افزار! لینک ویدئو را وارد کنید تا فایل صوتی با بالاترین کیفیت موجود (Best Quality) استخراج شود.</p>
+        
+        <div class="input-group">
+            <input type="text" id="youtube-url" placeholder="لینک ویدئو... (مثلاً https://youtube.com/watch?v=...)">
+        </div>
+
+        <select id="format">
+            <option value="mp3">فرمت MP3 (رایج‌ترین)</option>
+            <option value="wav">فرمت WAV (بدون افت کیفیت)</option>
+            <option value="ogg">فرمت OGG (بهینه برای وب)</option>
+        </select>
+
+        <button id="convert-btn" onclick="convertVideo()">استخراج و دریافت لینک</button>
+        
+        <div class="loader" id="loader"></div>
+        <div class="error" id="error-msg"></div>
+
+        <div id="result">
+            <p>✅ فایل شما آماده دانلود است!</p>
+            <a href="#" id="download-btn-link" target="_blank">
+                <button id="download-btn">📥 دانلود مستقیم فایل</button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        async function convertVideo() {
+            const urlInput = document.getElementById('youtube-url').value.trim();
+            const format = document.getElementById('format').value;
+            const convertBtn = document.getElementById('convert-btn');
+            const loader = document.getElementById('loader');
+            const resultDiv = document.getElementById('result');
+            const errorMsg = document.getElementById('error-msg');
+            const downloadBtnLink = document.getElementById('download-btn-link');
+
+            // مخفی کردن پیام‌های قبلی
+            errorMsg.style.display = 'none';
+            resultDiv.style.display = 'none';
+
+            // بررسی ساده لینک
+            if (!urlInput || (!urlInput.includes('youtube.com') && !urlInput.includes('youtu.be'))) {
+                errorMsg.innerText = '⚠️ لطفاً یک لینک معتبر از یوتیوب وارد کنید.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // تغییر وضعیت دکمه و نمایش لودینگ
+            convertBtn.disabled = true;
+            convertBtn.innerText = 'در حال ارتباط با سرور...';
+            loader.style.display = 'block';
+
+            try {
+                /* 
+                 در اینجا از API رایگان و قدرتمند Cobalt استفاده شده است 
+                 این API نیازی به بک‌اند ندارد و مستقیماً لینک دانلود را می‌سازد
+                */
+                const response = await fetch('https://api.cobalt.tools/api/json', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: urlInput,
+                        isAudioOnly: true,
+                        aFormat: format
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('سرور در حال حاضر پاسخگو نیست.');
+                }
+
+                const data = await response.json();
+
+                if (data.status === 'error') {
+                    throw new Error(data.text || 'خطا در تبدیل این ویدئو.');
+                }
+
+                // اگر لینک دانلود با موفقیت دریافت شد
+                if (data.url) {
+                    downloadBtnLink.href = data.url;
+                    
+                    // نمایش بخش دانلود
+                    loader.style.display = 'none';
+                    resultDiv.style.display = 'block';
+                    convertBtn.innerText = 'تبدیل یک ویدئوی دیگر';
+                    convertBtn.disabled = false;
+                    document.getElementById('youtube-url').value = ''; // پاک کردن کادر
+                }
+
+            } catch (error) {
+                // مدیریت خطاها
+                loader.style.display = 'none';
+                convertBtn.disabled = false;
+                convertBtn.innerText = 'استخراج و دریافت لینک';
+                errorMsg.innerText = '❌ ' + (error.message || 'متاسفانه خطایی رخ داد. لطفاً دوباره تلاش کنید.');
+                errorMsg.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
